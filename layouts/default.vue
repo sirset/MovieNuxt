@@ -1,89 +1,104 @@
 <template>
   <v-app>
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
-      app
-    >
-      <v-list>
-        <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-        >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-app-bar
-      :clipped-left="clipped"
-      fixed
-      app
-    >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
-      >
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="clipped = !clipped"
-      >
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="fixed = !fixed"
-      >
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="title" />
+    <!-- Header  -->
+    <v-toolbar
+      color="black" 
+    >   
+        <v-col cols="6" sm="6" md="4" lg="3">
+          <v-toolbar-items>
+          <v-text-field 
+            v-model="movieinput"
+            class="pt-6"
+            label="Search Movie"
+            background-color="white"
+            color="black"
+            append-icon="mdi-magnify"
+            @click:append="searchmovie"
+            outlined            
+            clearable
+            rounded
+            >
+          </v-text-field>
+          </v-toolbar-items>
+        </v-col>
       <v-spacer />
+      <!-- Bar Left  -->
+      <v-menu
+        bottom
+        left
+        >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            class="hidden-md-and-up"
+            icon
+            v-bind="attrs"
+            v-on="on"
+            color="white"
+            >
+            <v-icon>mdi-menu</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item,i) in listnavegation"
+            :key="i"
+            >
+            <v-btn 
+              text
+              color="info"
+              nuxt
+              :to="item.navegationto"
+            >
+              {{item.title}}
+            </v-btn>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <v-toolbar-items v-if="menutop"  
+        class="hidden-sm-and-down">
+        <v-btn 
+          v-for="(item,i) in listnavegation"
+          :key="i"
+          text
+          color="info"
+          nuxt
+          :to="item.navegationto"
+        >
+          {{item.title}}
+        </v-btn>
+        
+      </v-toolbar-items>
       <v-btn
         icon
-        @click.stop="rightDrawer = !rightDrawer"
+        class="hidden-sm-and-down"
+        @click.stop="menutop = !menutop"
+        color="white"
       >
-        <v-icon>mdi-menu</v-icon>
+        <v-icon>mdi-{{ `chevron-${menutop ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
-    </v-app-bar>
+    </v-toolbar >
+    <!-- Content  -->
     <v-main>
       <v-container>
         <nuxt />
       </v-container>
     </v-main>
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      temporary
-      fixed
-    >
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>
-              mdi-repeat
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+    <!-- footer -->
     <v-footer
-      :absolute="!fixed"
       app
+      dark
+      :padless= true
     >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+      <v-card
+        flat
+        tile
+        width="100%"
+        class="text-center"
+      >
+        <v-card-text class="white--text">
+          <span>Copy right &copy; {{ new Date().getFullYear() }}, Andres Echavarria</span>
+        </v-card-text>
+      </v-card>
     </v-footer>
   </v-app>
 </template>
@@ -92,25 +107,19 @@
 export default {
   data () {
     return {
-      clipped: false,
-      drawer: false,
-      fixed: false,
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
-        }
+      menutop: true,
+      movieinput: "",
+      menudwon: false,
+      listnavegation:[
+        {title:"Popular",navegationto:"popular"},
+        {title:"Top Rated",navegationto:"toprated"},
+        {title:"Upcoming",navegationto:"upcoming"}
       ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
+    }
+  },
+  methods:{
+    searchmovie(){
+      console.log("oprimio search");
     }
   }
 }
